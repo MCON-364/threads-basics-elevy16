@@ -49,19 +49,55 @@ public class LambdaRunnableExercise {
      * wrap it in a Thread named "logger", start it, and join it.
      */
     public void launchLoggerThread(List<String> log, String message) throws InterruptedException {
+
         // TODO: create a Runnable lambda, pass it to new Thread(..., "logger"),
         //       start the thread, join it, and store the message in loggedMessage.
-    }
+        Runnable r = () -> {
+            log.add(message);
+            loggedMessage = message;
+        };
+        Thread t = new Thread(r, "logger");
+        t.start();
+        t.join();
+        }
 
-    /**
-     * (B) Launch two threads with inline lambda syntax.
-     * "counter-a" counts HIGH-priority tasks → stored in highCount.
-     * "counter-b" counts LOW-priority tasks  → stored in lowCount.
-     * Start both, then join both before returning.
-     */
-    public void launchTwoCounterThreads(List<Task> tasks) throws InterruptedException {
+        /**
+         * (B) Launch two threads with inline lambda syntax.
+         * "counter-a" counts HIGH-priority tasks → stored in highCount.
+         * "counter-b" counts LOW-priority tasks  → stored in lowCount.
+         * Start both, then join both before returning.
+         */
+
+        public void launchTwoCounterThreads(List<Task> tasks) throws InterruptedException {
         // TODO: create two threads using inline lambda syntax, start both,
         //       join both, and store results in highCount and lowCount.
+            Thread t = new Thread(() -> {
+                int count = 0;
+                for (Task task : tasks) {
+                    if (task.priority() == Priority.HIGH) {
+                        count++;
+                    }
+                }
+                highCount = count;
+
+            }, "counter-a");
+
+            Thread r = new Thread(() ->
+            {
+                int count = 0;
+                for (Task task : tasks) {
+                    if (task.priority() == Priority.LOW) {
+                        count++;
+                    }
+                }
+                lowCount = count;
+
+            }, "counter-b");
+
+            t.start();
+            r.start();
+            t.join();
+            r.join();
     }
 
     public String getLoggedMessage() { return loggedMessage; }
